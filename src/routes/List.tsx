@@ -112,9 +112,11 @@ function Lists() {
           {lists.map((list) => (
             <Card key={list.id}>
               <CardHeader className="pb-3">
-                <div className="flex items-center justify-between gap-3">
-                  <CardTitle className="text-lg truncate">{list.name}</CardTitle>
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <CardTitle className="text-lg min-w-0 break-words overflow-hidden [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical]">
+                    {list.name}
+                  </CardTitle>
+                  <div className="flex items-center gap-2 shrink-0">
                     <Button size="sm" variant="outline" onClick={() => openView(list.id)}>
                       View list
                     </Button>
