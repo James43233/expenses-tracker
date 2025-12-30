@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  color-scheme: light;
+  /* Primary: Deep Purple (Light) */
+  --color-primary: #4b1a5c;
+  --color-primary-light: #6b2e7c;
+  --color-primary-dark: #2d0f3e;
+
+  /* Secondary: Medium Purple (Light) */
+  --color-secondary: #8b5ba8;
+  --color-secondary-light: #ab7bc8;
+  --color-secondary-dark: #6b3b88;
+
+  /* Tertiary: Wine Red (Light) */
+  --color-tertiary: #8b1a3c;
+  --color-tertiary-light: #ab3a5c;
+  --color-tertiary-dark: #6b0a2c;
+
+  /* Error: Red */
+  --color-error: #c41e3a;
+
+  /* Surfaces */
+  --color-surface-dim: #f5e6fa;
+  --color-surface: #ffffff;
+  --color-surface-bright: #f9f0fc;
+
+  /* Text */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-text-tertiary: #999999;
+
+  /* Border */
+  --color-border: #e0c8ea;
+  --color-border-light: #f0e0f5;
+
+  --background: 0 0% 100%;
+  --foreground: 0 0% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+  --primary: 281 34% 25%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 281 24% 40%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 40%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 281 34% 25%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 281 20% 85%;
+  --input: 281 20% 90%;
+  --ring: 281 34% 25%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Use the same HSL variable format as :root.
+     Tailwind tokens are mapped via hsl(var(--...)) in @theme inline. */
+  --background: 281 34% 10%;
+  --foreground: 0 0% 95%;
+
+  --card: 281 34% 12%;
+  --card-foreground: 0 0% 95%;
+  --popover: 281 34% 12%;
+  --popover-foreground: 0 0% 95%;
+
+  --primary: 281 60% 55%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 281 25% 22%;
+  --secondary-foreground: 0 0% 95%;
+
+  --muted: 281 20% 18%;
+  --muted-foreground: 0 0% 65%;
+  --accent: 281 25% 20%;
+  --accent-foreground: 0 0% 95%;
+
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 281 20% 22%;
+  --input: 281 20% 18%;
+  --ring: 281 60% 55%;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: calc(var(--radius));
+  --radius-lg: calc(var(--radius) + 2px);
+}
+
+

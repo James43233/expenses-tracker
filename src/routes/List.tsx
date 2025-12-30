@@ -1,0 +1,229 @@
+"use client"
+
+import { useMemo, useState } from "react"
+import { createFileRoute } from "@tanstack/react-router"
+import { useLists } from "@/hooks/useList"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Separator } from "@/components/ui/separator"
+import { Plus, ShoppingCart, Trash2, X } from "lucide-react"
+
+const CATEGORIES = ["Grocery", "Public Market", "Personal", "Household", "Other"]
+
+function Lists() {
+  const { lists, createList, deleteList, addItemToList, toggleItemComplete, deleteItem, uncheckAllItems } = useLists()
+  const [newListName, setNewListName] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0])
+  const [isViewOpen, setIsViewOpen] = useState(false)
+  const [viewListId, setViewListId] = useState<string | null>(null)
+  const [viewItemInput, setViewItemInput] = useState("")
+
+  const handleCreateList = () => {
+    if (newListName.trim()) {
+      createList(newListName, selectedCategory)
+      setNewListName("")
+    }
+  }
+
+  const selectedList = useMemo(() => {
+    if (!viewListId) return null
+    return lists.find((l) => l.id === viewListId) ?? null
+  }, [lists, viewListId])
+
+  const openView = (listId: string) => {
+    setViewListId(listId)
+    setViewItemInput("")
+    setIsViewOpen(true)
+  }
+
+  const handleAddItemInView = () => {
+    if (!viewListId) return
+    const itemName = viewItemInput.trim()
+    if (!itemName) return
+    addItemToList(viewListId, itemName)
+    setViewItemInput("")
+  }
+
+  return (
+    <div className="space-y-8 w-full max-w-5xl mx-auto mt-4">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-linear-to-r from-primary to-primary/80 rounded-xl p-3 text-primary-foreground shadow-lg">
+        <div className="p-3">
+          <h2 className="text-3xl font-bold text-primary-foreground">Shopping Lists</h2>
+          <p className="text-primary-foreground/90 mt-1">Create and manage your shopping lists</p>
+        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="w-full sm:w-auto gap-2">
+              <Plus className="h-4 w-4" />
+              New List
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New List</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="list-name">List Name</Label>
+                <Input
+                  id="list-name"
+                  placeholder="e.g., Weekly Groceries"
+                  value={newListName}
+                  onChange={(e) => setNewListName(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleCreateList()}
+                />
+              </div>
+              <div>
+                <Label htmlFor="category">Category</Label>
+                <select
+                  id="category"
+                  className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Button onClick={handleCreateList} className="w-full">
+                Create List
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {lists.length === 0 ? (
+        <Card>
+          <CardContent className="pt-16 pb-16 text-center">
+            <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground">No lists yet. Create one to get started!</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {lists.map((list) => (
+            <Card key={list.id}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between gap-3">
+                  <CardTitle className="text-lg truncate">{list.name}</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" variant="outline" onClick={() => openView(list.id)}>
+                      View list
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => deleteList(list.id)}
+                      className="text-destructive hover:text-destructive"
+                      aria-label="Delete list"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Dialog
+        open={isViewOpen}
+        onOpenChange={(open) => {
+          setIsViewOpen(open)
+          if (!open) {
+            setViewListId(null)
+            setViewItemInput("")
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{selectedList?.name ?? "List"}</DialogTitle>
+          </DialogHeader>
+
+          {!selectedList ? (
+            <div className="text-sm text-muted-foreground">List not found.</div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-sm text-muted-foreground">{selectedList.items.length} items</div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => uncheckAllItems(selectedList.id)}
+                  disabled={selectedList.items.length === 0}
+                >
+                  Reset checks
+                </Button>
+              </div>
+
+              <Separator />
+
+              {selectedList.items.length === 0 ? (
+                <div className="text-sm text-muted-foreground">No items yet. Add one below.</div>
+              ) : (
+                <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+                  {selectedList.items.map((item) => (
+                    <div key={item.id} className="flex items-center gap-3">
+                      <Checkbox checked={item.completed} onCheckedChange={() => toggleItemComplete(selectedList.id, item.id)} />
+                      <span className={`flex-1 text-sm ${item.completed ? "line-through text-muted-foreground" : ""}`}>
+                        {item.name}
+                      </span>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => deleteItem(selectedList.id, item.id)}
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        aria-label="Delete item"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <Separator />
+
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Add item..."
+                  value={viewItemInput}
+                  onChange={(e) => setViewItemInput(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      handleAddItemInView()
+                    }
+                  }}
+                />
+                <Button onClick={handleAddItemInView} className="gap-2" disabled={!viewItemInput.trim()}>
+                  <Plus className="h-4 w-4" />
+                  Add
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsViewOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
+export const Route = createFileRoute("/List")({
+  component: Lists,
+})
