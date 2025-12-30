@@ -18,7 +18,9 @@ export default function ExpenseSummary({ date, total, count, label }: ExpenseSum
             <h4 className="font-semibold text-sm text-muted-foreground">{label ?? "Month Total"}</h4>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </div>
-          <p className="text-3xl font-bold text-primary">₱{total.toFixed(2)}</p>
+          <p className="min-w-0 truncate whitespace-nowrap font-bold text-primary tabular-nums leading-tight text-lg sm:text-lg md:text-2xl lg:text-3xl">
+            ₱{total.toFixed(2)}
+          </p>
         </CardContent>
       </Card>
 

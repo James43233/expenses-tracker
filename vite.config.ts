@@ -28,14 +28,17 @@ export default defineConfig({
       registerType: 'autoUpdate',
       // We register via `src/pwa.ts`; prevent double-registration.
       injectRegister: null,
-      // Allows testing install/offline behavior on localhost during `npm run dev`.
+      // Keep SW generation off in dev to avoid noisy `dev-dist` glob warnings.
+      // Test install/offline via `npm run build` + `npm run preview`.
       devOptions: {
-        enabled: true,
+        enabled: false,
       },
       includeAssets: ['favicon.ico', 'robots.txt', 'logo192.png', 'logo512.png'],
       workbox: {
         // SPA offline support: when offline, still serve the app shell for navigation requests.
         navigateFallback: '/index.html',
+        clientsClaim: true,
+        skipWaiting: true,
       },
       manifest: {
         name: 'Expense Tracker',
