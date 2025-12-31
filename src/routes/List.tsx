@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
-import { Plus, ShoppingCart, Trash2, X } from "lucide-react"
+import { Pencil, Plus, ShoppingCart, Trash2, X, List } from "lucide-react"
 
 const CATEGORIES = ["Grocery", "Public Market", "Personal", "Household", "Other"]
 
@@ -50,16 +50,11 @@ function Lists() {
 
   return (
     <div className="space-y-8 w-full max-w-5xl mx-auto mt-4">
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-linear-to-r from-primary to-primary/80 rounded-xl p-3 text-primary-foreground shadow-lg">
-        <div className="p-3">
-          <h2 className="text-3xl font-bold text-primary-foreground">Shopping Lists</h2>
-          <p className="text-primary-foreground/90 mt-1">Create and manage your shopping lists</p>
-        </div>
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center ">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto gap-2">
-              <Plus className="h-4 w-4" />
-              New List
+            <Button className=" gap-2" size="md" variant="secondary">
+              <List /> Create New List
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -108,25 +103,25 @@ function Lists() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {lists.map((list) => (
-            <Card key={list.id}>
-              <CardHeader className="pb-3">
+            <Card key={list.id} className="shadow-sm rounded-2xl">
+              <CardHeader className="pb-3 ">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0 flex-1">
-                    <CardTitle className="text-lg min-w-0 wrap-break-word overflow-hidden [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical]">
+                    <CardTitle className="text-lg  min-w-0 wrap-break-word overflow-hidden [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical]">
                       {list.name}
                     </CardTitle>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    <Button size="sm" variant="outline" onClick={() => openView(list.id)}>
-                      View list
+                    <Button size="sm" variant="secondary" onClick={() => openView(list.id)}>
+                      <Pencil />
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="destructive"
                       size="icon"
                       onClick={() => deleteList(list.id)}
-                      className="text-destructive hover:text-destructive"
+                      className=" hover:text-destructive"
                       aria-label="Delete list"
                     >
                       <Trash2 className="h-4 w-4" />

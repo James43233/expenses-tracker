@@ -14,11 +14,11 @@ export default function Header() {
   const isActive = (path: string) => location.pathname === path
 
   return (
-    <header className="bg-primary text-primary-foreground shadow-lg mb-4">
+    <header className="bg-surface-dimmed text-primary shadow-lg mb-4">
       <div className="mx-auto flex items-center h-16 max-w-5xl px-4 sm:px-6">
         {/* Left */}
         <div className="flex items-center justify-start flex-1 min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold truncate">Expense Tracker</h1>
+          <h1 className="text-2xl sm:text-2xl font-bold truncate">Spendify</h1>
         </div>
 
         {/* Center (desktop nav) */}

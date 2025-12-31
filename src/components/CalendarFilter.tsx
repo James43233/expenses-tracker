@@ -25,45 +25,51 @@ export default function CalendarFilter({
   dateRange,
   onDateRangeChange,
   selectedCount,
-
+  rangeCount,
 }: CalendarFilterProps) {
   return (
     <div className="w-full">
-      <Card className="w-full flex ">
-        <CardHeader className="pb-3 flex justify-between items-center">
-          <CardTitle className="text-base text-center">Filter by Date</CardTitle>
-          <div className="flex gap-2">
-            <Button
-              variant={!useRange ? "default" : "outline"}
-              onClick={() => {
-                onUseRangeChange(false)
-                onDateRangeChange({ from: undefined, to: undefined })
-              }}
-              className="flex-1"
-              size="lg"
-            >
-              Single Date
-            </Button>
-            <Button
-              variant={useRange ? "default" : "outline"}
-              onClick={() => onUseRangeChange(true)}
-              className="flex-1"
-              size="lg"
-            >
-              Date Range
-            </Button>
+      <Card className="w-full shadow-sm rounded-2xl">
+        <CardHeader className="space-y-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <CardTitle className="text-base">Filter by Date</CardTitle>
+            <div className="flex gap-2">
+              <Button
+                variant={!useRange ? "secondary" : "outline"}
+                onClick={() => {
+                  onUseRangeChange(false)
+                  onDateRangeChange({ from: undefined, to: undefined })
+                }}
+                className="flex-1"
+                size="lg"
+              >
+                Single Date
+              </Button>
+              <Button
+                variant={useRange ? "secondary" : "outline"}
+                onClick={() => onUseRangeChange(true)}
+                className="flex-1"
+                size="lg"
+              >
+                Date Range
+              </Button>
+            </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+
+        <CardContent className="space-y-2">
           {!useRange ? (
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal bg-transparent sm:w-60"
+                  >
                     {selectedDate ? format(selectedDate, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto max-w-[calc(100vw-2rem)] p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={selectedDate || undefined}
@@ -72,15 +78,16 @@ export default function CalendarFilter({
                   />
                 </PopoverContent>
               </Popover>
-              {selectedDate && (
-                <div className="text-sm text-muted-foreground">Expenses: {selectedCount ?? 0}</div>
-              )}
+              {selectedDate && <div className="text-sm text-primary">Expenses: {selectedCount ?? 0}</div>}
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal bg-transparent">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal bg-transparent sm:w-60"
+                  >
                     {dateRange.from ? (
                       dateRange.to ? (
                         <>
@@ -94,7 +101,7 @@ export default function CalendarFilter({
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto max-w-[calc(100vw-2rem)] p-0" align="start">
                   <div className="p-4">
                     <Calendar
                       mode="range"
@@ -105,7 +112,9 @@ export default function CalendarFilter({
                   </div>
                 </PopoverContent>
               </Popover>
-
+              {dateRange.from && dateRange.to && (
+                <div className="text-sm text-muted-foreground">Expenses: {rangeCount ?? 0}</div>
+              )}
             </div>
           )}
         </CardContent>

@@ -16,6 +16,8 @@ export interface DateRange {
   to: Date | undefined
 }
 
+type ExpenseUpdate = Partial<Pick<Expense, "description" | "amount" | "date">>
+
 export function useExpenses() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
   const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined })
@@ -66,6 +68,36 @@ export function useExpenses() {
     void db.expenses.delete(id).catch((e) => {
       console.error("Failed to delete expense:", e)
     })
+  }, [])
+
+  const updateExpense = useCallback(async (id: string, updates: ExpenseUpdate) => {
+    const next: Partial<ExpenseRecord> = {}
+
+    if (updates.description !== undefined) {
+      const description = String(updates.description).trim()
+      if (!description) return
+      next.description = description
+    }
+
+    if (updates.amount !== undefined) {
+      const amount = Number(updates.amount)
+      if (!Number.isFinite(amount) || amount <= 0) return
+      next.amount = amount
+    }
+
+    if (updates.date !== undefined) {
+      const date = updates.date instanceof Date ? updates.date : new Date(updates.date)
+      if (isNaN(date.getTime())) return
+      next.date = date
+    }
+
+    if (Object.keys(next).length === 0) return
+
+    try {
+      await db.expenses.update(id, next)
+    } catch (e) {
+      console.error("Failed to update expense:", e)
+    }
   }, [])
 
   const getExpensesForDay = useCallback(
@@ -138,6 +170,7 @@ export function useExpenses() {
     addExpense,
     addMultipleExpenses,
     deleteExpense,
+    updateExpense,
     getExpensesForDay,
     getExpensesForMonth,
     getExpensesForRange,

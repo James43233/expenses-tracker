@@ -8,6 +8,7 @@ import ExpenseSummary from "@/components/ExpenseSummary"
 import ExpenseList from "@/components/ExpenseList"
 import CalendarFilter from "@/components/CalendarFilter"
 import AddExpenseModal from "@/components/AddExpenseModal"
+import EditExpensesModal from "@/components/EditExpensesModal"
 import type { DateRange } from "react-day-picker"
 
 export const Route = createFileRoute("/")({
@@ -15,7 +16,9 @@ export const Route = createFileRoute("/")({
 })
 
 function Dashboard() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isAddOpen, setIsAddOpen] = useState(false)
+  const [isViewMoreOpen, setIsViewMoreOpen] = useState(false)
+  const [viewMoreExpenseId, setViewMoreExpenseId] = useState<string | null>(null)
   const [useRange, setUseRange] = useState(false)
   const [dateRange, setDateRange] = useState<DateRange>({ from: undefined, to: undefined })
   const {
@@ -23,6 +26,7 @@ function Dashboard() {
     setSelectedDate,
     addMultipleExpenses,
     deleteExpense,
+    updateExpense,
     getExpensesForDay,
     getDayTotal,
     getExpensesForRange,
@@ -45,50 +49,67 @@ function Dashboard() {
 
   const summaryLabel = useRange ? "Range Total" : "Day Total"
 
+  const viewMoreExpenses = useMemo(() => {
+    if (!viewMoreExpenseId) return []
+    const found = filteredExpenses.find((e) => e.id === viewMoreExpenseId)
+    return found ? [found] : []
+  }, [filteredExpenses, viewMoreExpenseId])
+
   return (
     <div className="space-y-6 w-full max-w-5xl mx-auto mt-4">
       {/* Hero Section */}
-      <div className="bg-linear-to-r from-primary to-primary/80 rounded-xl p-3 text-primary-foreground shadow-lg">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-2">Manage Your Expenses</h2>
-        <p className="text-primary-foreground/90">Track and organize your spending with ease</p>
-      </div>
+      {(useRange || selectedDate) && (
+        <ExpenseSummary date={selectedDate || new Date()} total={filteredTotal} count={filteredExpenses.length} label={summaryLabel} />
+      )}
+      {/* Calendar + actions (responsive) */}
+      <div className="w-full">
+        <CalendarFilter
+          selectedDate={selectedDate}
+          onDateChange={(date) => {
+            setSelectedDate(date)
+            setUseRange(false)
+            setDateRange({ from: undefined, to: undefined })
+          }}
+          useRange={useRange}
+          onUseRangeChange={setUseRange}
+          dateRange={dateRange}
+          onDateRangeChange={setDateRange}
+          selectedCount={selectedDate ? getExpensesForDay(selectedDate).length : 0}
+          rangeCount={dateRange.from && dateRange.to ? getExpensesForRange(dateRange.from, dateRange.to).length : 0}
+        />
 
-      {/* One line: Calendar card (full width) + Add button */}
-      <div className="flex flex-row gap-4 items-start w-full">
-        <div className="flex-1 min-w-0">
-          <CalendarFilter
-            selectedDate={selectedDate}
-            onDateChange={(date) => {
-              setSelectedDate(date)
-              setUseRange(false)
-              setDateRange({ from: undefined, to: undefined })
-            }}
-            useRange={useRange}
-            onUseRangeChange={setUseRange}
-            dateRange={dateRange}
-            onDateRangeChange={setDateRange}
-            selectedCount={selectedDate ? getExpensesForDay(selectedDate).length : 0}
-            rangeCount={dateRange.from && dateRange.to ? getExpensesForRange(dateRange.from, dateRange.to).length : 0}
-          />
-          <Button onClick={() => setIsModalOpen(true)} size="lg" className="shrink-0 whitespace-nowrap w-full mt-4">
-            <Plus className="h-5 w-5 mr-2" />
-            Add Expense
+        <div className="mt-4 flex">
+          <Button onClick={() => setIsAddOpen(true)} size="sm" variant="secondary" className="flex items-center justify-center">
+            <Plus className="h-5 w-5 " />
+            Expense
           </Button>
         </div>
       </div>
 
       {/* Summary below the calendar container */}
-      {(useRange || selectedDate) && (
-        <ExpenseSummary date={selectedDate || new Date()} total={filteredTotal} count={filteredExpenses.length} label={summaryLabel} />
-      )}
+      <ExpenseList
+        expenses={filteredExpenses}
+        onViewMore={(expenseId) => {
+          setViewMoreExpenseId(expenseId)
+          setIsViewMoreOpen(true)
+        }}
+      />
 
-      <ExpenseList expenses={filteredExpenses} onDelete={deleteExpense} />
+      <EditExpensesModal
+        isOpen={isViewMoreOpen}
+        onClose={() => {
+          setIsViewMoreOpen(false)
+          setViewMoreExpenseId(null)
+        }}
+        expenses={viewMoreExpenses}
+        onUpdate={updateExpense}
+        onDelete={deleteExpense}
+      />
 
-      {/* Add Expense Modal */}
-      {isModalOpen && (
+      {isAddOpen && (
         <AddExpenseModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          isOpen={isAddOpen}
+          onClose={() => setIsAddOpen(false)}
           onAdd={addMultipleExpenses}
           defaultDate={selectedDate || new Date()}
         />

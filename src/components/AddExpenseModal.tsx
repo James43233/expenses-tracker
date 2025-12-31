@@ -88,7 +88,7 @@ export default function AddExpenseModal({ isOpen, onClose, onAdd, defaultDate }:
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-2xl">
         <DialogHeader>
           <DialogTitle>Add Expenses</DialogTitle>
         </DialogHeader>
@@ -120,12 +120,13 @@ export default function AddExpenseModal({ isOpen, onClose, onAdd, defaultDate }:
                   <Label htmlFor={`desc-${index}`} className="text-sm">
                     Description
                   </Label>
-                  <Input
+                  <textarea
                     id={`desc-${index}`}
-                    type="text"
-                    placeholder="e.g., Nochebuena"
+                    placeholder="Ex. Groceries, Transport"
                     value={input.description}
+                    rows={4}
                     onChange={(e) => handleInputChange(index, "description", e.target.value)}
+                    className="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none resize-y focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
                   />
                 </div>
 
