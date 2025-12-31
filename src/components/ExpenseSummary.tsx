@@ -1,5 +1,6 @@
-import { TrendingUp, Calendar } from "lucide-react"
+import { TrendingUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
+import { format } from "date-fns"
 
 interface ExpenseSummaryProps {
   date: Date
@@ -9,7 +10,6 @@ interface ExpenseSummaryProps {
 }
 
 export default function ExpenseSummary({ date, total, count, label }: ExpenseSummaryProps) {
-  void date
   return (
     <div className=" mx-auto ">
       <Card>
@@ -17,6 +17,10 @@ export default function ExpenseSummary({ date, total, count, label }: ExpenseSum
           <div className="flex items-center justify-between mb-2">
             <h4 className="font-semibold text-sm text-muted-foreground">{label ?? "Month Total"}</h4>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </div>
+          <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+            <div className="min-w-0 truncate">{format(date, "PPP")}</div>
+            <div className="whitespace-nowrap">{count} {count === 1 ? "expense" : "expenses"}</div>
           </div>
           <p className="min-w-0 truncate whitespace-nowrap font-bold text-primary tabular-nums leading-tight text-lg sm:text-lg md:text-2xl lg:text-3xl">
             ₱{total.toFixed(2)}
