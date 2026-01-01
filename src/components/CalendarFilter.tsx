@@ -29,7 +29,7 @@ export default function CalendarFilter({
 }: CalendarFilterProps) {
   return (
     <div className="w-full">
-      <Card className="w-full shadow-sm rounded-2xl">
+      <Card className="w-full shadow-sm rounded-2xl bg-surface-container">
         <CardHeader className="space-y-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <CardTitle className="text-base">Filter by Date</CardTitle>

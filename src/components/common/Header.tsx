@@ -1,13 +1,12 @@
 import { useState } from "react"
 import { Link, useLocation } from "@tanstack/react-router"
-import { Menu, Moon, Sun } from "lucide-react"
+import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useTheme } from "@/hooks/useTheme"
 import Navigation from "./Navigation"
+import Logo from "/2.png"
 
 export default function Header() {
-  const { isDark, toggleTheme } = useTheme()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const location = useLocation()
 
@@ -18,7 +17,9 @@ export default function Header() {
       <div className="mx-auto flex items-center h-16 max-w-5xl px-4 sm:px-6">
         {/* Left */}
         <div className="flex items-center justify-start flex-1 min-w-0">
-          <h1 className="text-2xl sm:text-2xl font-bold truncate">Spendify</h1>
+          <h1 className="text-2xl sm:text-2xl font-bold truncate ">
+            <img src={Logo} alt="Spendify logo" className="h-14" />
+          </h1>
         </div>
 
         {/* Center (desktop nav) */}
@@ -28,15 +29,6 @@ export default function Header() {
 
         {/* Right */}
         <div className="flex items-center justify-end flex-1 gap-2">
-          <Button
-            onClick={toggleTheme}
-            variant="outline"
-            size="icon"
-            className="rounded-lg bg-transparent"
-            aria-label="Toggle theme"
-          >
-            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
 
           {/* Mobile/Tablet menu */}
           <Button

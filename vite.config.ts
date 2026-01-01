@@ -33,7 +33,7 @@ export default defineConfig({
       devOptions: {
         enabled: false,
       },
-      includeAssets: ['favicon.ico', 'robots.txt', 'logo192.png', 'logo512.png'],
+      includeAssets: [ 'robots.txt', '2.png', 'icon.svg'],
       workbox: {
         // SPA offline support: when offline, still serve the app shell for navigation requests.
         navigateFallback: '/index.html',
@@ -41,8 +41,8 @@ export default defineConfig({
         skipWaiting: true,
       },
       manifest: {
-        name: 'Expense Tracker',
-        short_name: 'Expenses',
+        name: 'Spendify Expense Tracker',
+        short_name: 'Spendify',
         description: 'Track expenses and shopping lists',
         start_url: '/',
         scope: '/',
@@ -51,13 +51,13 @@ export default defineConfig({
         theme_color: '#4b1a5c',
         icons: [
           {
-            src: 'logo192.png',
-            sizes: '192x192',
-            type: 'image/png',
+            src: 'icon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
           },
           {
-            src: 'logo512.png',
-            sizes: '512x512',
+            src: '2.png',
+            sizes: '225x73',
             type: 'image/png',
           },
         ],
