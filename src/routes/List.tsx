@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
-import { Pencil, Plus, ShoppingCart, Trash2, X, List } from "lucide-react"
+import { Plus, ShoppingCart, Trash2, X, List } from "lucide-react"
 
 const CATEGORIES = ["Grocery", "Public Market", "Personal", "Household", "Other"]
 
@@ -103,33 +103,51 @@ function Lists() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-4">
           {lists.map((list) => (
-            <Card key={list.id} className="shadow-sm rounded-2xl">
-              <CardHeader className="pb-3 ">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="min-w-0 flex-1">
-                    <CardTitle className="text-lg  min-w-0 wrap-break-word overflow-hidden [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical]">
-                      {list.name}
-                    </CardTitle>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Button size="sm" variant="secondary" onClick={() => openView(list.id)}>
-                      <Pencil />
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      onClick={() => deleteList(list.id)}
-                      className=" hover:text-destructive"
-                      aria-label="Delete list"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
+            <button
+              key={list.id}
+              type="button"
+              onClick={() => openView(list.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  openView(list.id)
+                }
+              }}
+              className="w-full text-left"
+              aria-label={`Open list ${list.name}`}
+            >
+              <Card className="shadow-sm rounded-2xl transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg min-w-0 wrap-break-word overflow-hidden [display:-webkit-box] [-webkit-line-clamp:2] [-webkit-box-orient:vertical]">
+                    {list.name}
+                  </CardTitle>
+                  <div className="text-xs text-muted-foreground">{list.category}</div>
+                </CardHeader>
+
+                <CardContent className="pt-0">
+                  <div className="text-xs text-muted-foreground">List:</div>
+                  {list.items.length === 0 ? (
+                    <div className="mt-1 text-sm text-muted-foreground">No items yet</div>
+                  ) : (
+                    <div className="mt-1 space-y-1">
+                      {list.items.slice(0, 2).map((item) => (
+                        <div
+                          key={item.id}
+                          className={`text-sm ${item.completed ? "line-through text-muted-foreground" : "text-foreground"}`}
+                        >
+                          {item.name}
+                        </div>
+                      ))}
+                      {list.items.length > 2 && (
+                        <div className="text-sm text-muted-foreground">+{list.items.length - 2} more</div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </button>
           ))}
         </div>
       )}
@@ -147,6 +165,7 @@ function Lists() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{selectedList?.name ?? "List"}</DialogTitle>
+            {selectedList?.category ? <div className="text-sm text-muted-foreground">{selectedList.category}</div> : null}
           </DialogHeader>
 
           {!selectedList ? (
@@ -213,9 +232,24 @@ function Lists() {
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsViewOpen(false)}>
-              Close
-            </Button>
+            <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button variant="outline" onClick={() => setIsViewOpen(false)}>
+                Close
+              </Button>
+              {selectedList ? (
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    deleteList(selectedList.id)
+                    setIsViewOpen(false)
+                  }}
+                  className="gap-2"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete list
+                </Button>
+              ) : null}
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
