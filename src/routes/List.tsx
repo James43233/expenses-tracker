@@ -5,7 +5,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useLists } from "@/hooks/useList"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -21,6 +21,7 @@ function Lists() {
   const [isViewOpen, setIsViewOpen] = useState(false)
   const [viewListId, setViewListId] = useState<string | null>(null)
   const [viewItemInput, setViewItemInput] = useState("")
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const handleCreateList = () => {
     if (newListName.trim()) {
@@ -159,6 +160,7 @@ function Lists() {
           if (!open) {
             setViewListId(null)
             setViewItemInput("")
+            setShowDeleteConfirm(false)
           }
         }}
       >
@@ -231,24 +233,47 @@ function Lists() {
             </div>
           )}
 
-          <DialogFooter>
-            <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <Button variant="outline" onClick={() => setIsViewOpen(false)}>
-                Close
-              </Button>
+          <DialogFooter className="mt-8 sm:mt-8">
+            <div className="flex w-full flex-row justify-between items-center gap-4">
               {selectedList ? (
-                <Button
-                  variant="destructive"
-                  onClick={() => {
-                    deleteList(selectedList.id)
-                    setIsViewOpen(false)
-                  }}
-                  className="gap-2"
-                >
+                <Button variant="destructive" onClick={() => setShowDeleteConfirm(true)} className="gap-2">
                   <Trash2 className="h-4 w-4" />
                   Delete list
                 </Button>
-              ) : null}
+              ) : (
+                <div />
+              )}
+              <Button variant="outline" onClick={() => setIsViewOpen(false)}>
+                Close
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent className="w-80 max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Delete List</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground text-justify">
+              Are you sure you want to delete "{selectedList?.name}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <div className="flex w-full flex-row justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (selectedList) deleteList(selectedList.id)
+                  setIsViewOpen(false)
+                  setShowDeleteConfirm(false)
+                }}
+              >
+                Delete
+              </Button>
             </div>
           </DialogFooter>
         </DialogContent>
